@@ -1,4 +1,4 @@
-package codes.inthedark.threadutils;
+package codes.inthedark.threadlocal;
 
 import java.lang.ThreadLocal;
 import java.lang.ref.WeakReference;

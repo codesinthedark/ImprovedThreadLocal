@@ -1,4 +1,4 @@
-package codes.inthedark.threadutils;
+package codes.inthedark.threadlocal;
 
 import java.lang.ThreadLocal;
 import java.lang.ref.WeakReference;
@@ -9,10 +9,10 @@ import java.util.WeakHashMap;
 /**
  * @author Srdjan Mitrovic
  *
- *         This is improved ThreadLocal class that is not as safe as
- *         SafeThreadLocal but it is completely non-blocking. It is still an
- *         improvement over regular ThreadLocal because this will not leak
- *         memory when you redeploy your web application.
+ *         This is improved ThreadLocal class that is safer than ThreadLocal but
+ *         not as safe as SafeThreadLocal. However it is completely non-blocking
+ *         and a big improvement over regular ThreadLocal because this will not
+ *         leak class loaders when you redeploy your web application.
  */
 public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 
