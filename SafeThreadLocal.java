@@ -21,8 +21,8 @@ public class SafeThreadLocal<T> extends ThreadLocal<T> {
 	 * values to be garbage collected once no one else is holding onto the
 	 * Thread
 	 */
-	public final Map<Thread, Object> strongReferencesToValues = Collections
-			.synchronizedMap(new WeakHashMap<Thread, Object>());
+	private final Map<Thread, T> strongReferencesToValues = Collections
+			.synchronizedMap(new WeakHashMap<Thread, T>());
 
 	/**
 	 * This is weak reference to the value belonging to the current thread.
@@ -30,7 +30,7 @@ public class SafeThreadLocal<T> extends ThreadLocal<T> {
 	 * non-synchronous way. WeakReference allows the value to be cleaned up as
 	 * soon as this ThreadLocal object goes out of scope
 	 */
-	ThreadLocal<WeakReference<T>> threadLocalWeakReference = new ThreadLocal<WeakReference<T>>() {
+	private ThreadLocal<WeakReference<T>> threadLocalWeakReference = new ThreadLocal<WeakReference<T>>() {
 		protected WeakReference<T> initialValue() {
 			T value = SafeThreadLocal.this.initialValue();
 			strongReferencesToValues.put(Thread.currentThread(), value);

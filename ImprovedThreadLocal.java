@@ -26,7 +26,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 	 * values to be garbage collected once no one else is holding onto the
 	 * Thread
 	 */
-	public static final Map<Thread, Map<ThreadLocal<?>, Object>> strongReferencesToThreadLocalValues = Collections
+	private static final Map<Thread, Map<ThreadLocal<?>, Object>> strongReferencesToThreadLocalValues = Collections
 			.synchronizedMap(new WeakHashMap<Thread, Map<ThreadLocal<?>, Object>>());
 
 	/**
@@ -34,7 +34,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 	 * thread. Using this reference we can access the list of strong references
 	 * in a non-synchronous way.
 	 */
-	public static final ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>> threadLocalWeakReferenceToMapOfThreadLocals = new ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>>() {
+	private static final ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>> threadLocalWeakReferenceToMapOfThreadLocals = new ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>>() {
 		protected WeakReference<Map<ThreadLocal<?>, Object>> initialValue() {
 			Map<ThreadLocal<?>, Object> value = new WeakHashMap<ThreadLocal<?>, Object>();
 			strongReferencesToThreadLocalValues.put(Thread.currentThread(),
@@ -50,7 +50,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 	 * threadLocalWeakReferenceToMapOfThreadLocals to access the value but
 	 * getting the value is faster through this weak reference.
 	 */
-	ThreadLocal<WeakReference<T>> threadLocalWeakReference = new ThreadLocal<WeakReference<T>>() {
+	private ThreadLocal<WeakReference<T>> threadLocalWeakReference = new ThreadLocal<WeakReference<T>>() {
 		protected WeakReference<T> initialValue() {
 			T value = ImprovedThreadLocal.this.initialValue();
 
