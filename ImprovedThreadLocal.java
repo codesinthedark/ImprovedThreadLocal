@@ -9,9 +9,9 @@ import java.util.WeakHashMap;
 /**
  * @author Srdjan Mitrovic
  *
- *         This is improved ThreadLocal class that is safer than ThreadLocal but
- *         not as safe as SafeThreadLocal. However it is completely non-blocking
- *         and a big improvement over regular ThreadLocal because this will not
+ *         This is improved ThreadLocal class that is more complicated than SafeThreadLocal. However,
+ *         it is completely non-blocking for all operations, not just for reads.
+ *         This is a big improvement over regular ThreadLocal because this class will not
  *         leak class loaders when you redeploy your web application.
  */
 public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
