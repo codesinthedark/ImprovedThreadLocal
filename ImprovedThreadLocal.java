@@ -42,31 +42,9 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 		}
 	};
 
-	/**
-	 * We create WeakReference to ThreadLocal value and use this weak reference
-	 * in ThreadLocalMap, so that it can be cleaned up as soon as this
-	 * ThreadLocal object goes out of scope. We could use
-	 * threadLocalWeakReferenceToMapOfThreadLocals to access the value but
-	 * getting the value is faster through this weak reference.
-	 */
-	private ThreadLocal<WeakReference<T>> threadLocalWeakReference = new ThreadLocal<WeakReference<T>>() {
-		protected WeakReference<T> initialValue() {
-			T value = ImprovedThreadLocal.this.initialValue();
-
-			// Adding strong reference to the map corresponding to
-			// the current thread. We access this map through weak reference in
-			// a non-synchronized way to keep good performance.
-			threadLocalWeakReferenceToMapOfThreadLocals.get().get()
-					.put(this, value);
-
-			return new WeakReference<>(value);
-		}
-	};
-
 	public T get() {
-		return threadLocalWeakReference.get().get();
-		// return (T)
-		// threadLocalWeakReferenceToMapOfThreadLocals.get().get().get(this);
+		return (T)
+			threadLocalWeakReferenceToMapOfThreadLocals.get().get().get(this);
 	}
 
 	public void set(T value) {
@@ -75,8 +53,6 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 		// non-synchronized way to keep good performance.
 		threadLocalWeakReferenceToMapOfThreadLocals.get().get()
 				.put(this, value);
-		threadLocalWeakReference.set(new WeakReference<T>(value));
-
 	}
 
 	public void remove() {
