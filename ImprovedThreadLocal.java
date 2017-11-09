@@ -1,3 +1,4 @@
+
 import java.lang.ThreadLocal;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -7,9 +8,10 @@ import java.util.WeakHashMap;
 /**
  * @author Srdjan Mitrovic
  *
- *         This is improved ThreadLocal class that is is completely non-blocking for all operations.
- *         This is a big improvement over regular ThreadLocal because this class will not
- *         leak class loaders when you redeploy your web application.
+ *         This is improved ThreadLocal class that is is completely non-blocking
+ *         for all operations. This is a big improvement over regular
+ *         ThreadLocal because this class will not leak class loaders when you
+ *         redeploy your web application.
  */
 public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
 
@@ -35,8 +37,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
         @Override
         protected WeakReference<Map<ThreadLocal<?>, Object>> initialValue() {
             Map<ThreadLocal<?>, Object> value = new WeakHashMap<>();
-            strongReferencesToThreadLocalValues.put(Thread.currentThread(),
-                    value);
+            strongReferencesToThreadLocalValues.put(Thread.currentThread(), value);
             return new WeakReference<>(value);
         }
     };
@@ -44,8 +45,9 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T get() {
-        return (T)
-            threadLocalWeakReferenceToMapOfThreadLocals.get().get().get(this);
+
+        Map<ThreadLocal<?>, Object> threadLocalMap = threadLocalWeakReferenceToMapOfThreadLocals.get().get();
+        return (T) threadLocalMap.computeIfAbsent(this, (t -> this.initialValue()));
     }
 
     @Override
@@ -53,8 +55,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
         // Adding strong reference of this value to the map corresponding to the
         // current thread. We access this map through weak reference in a
         // non-synchronized way to keep good performance.
-        threadLocalWeakReferenceToMapOfThreadLocals.get().get()
-                .put(this, value);
+        threadLocalWeakReferenceToMapOfThreadLocals.get().get().put(this, value);
     }
 
     @Override
