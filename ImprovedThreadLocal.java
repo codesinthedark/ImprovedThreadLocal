@@ -49,6 +49,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
         T value = (T) threadLocalMap.get(this);
         if (value == null && !threadLocalMap.containsKey(this)) {
             value = this.initialValue();
+            set(value);
         }
         return value;
     }
