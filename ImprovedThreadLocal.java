@@ -45,9 +45,12 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T get() {
-
         Map<ThreadLocal<?>, Object> threadLocalMap = threadLocalWeakReferenceToMapOfThreadLocals.get().get();
-        return (T) threadLocalMap.computeIfAbsent(this, (t -> this.initialValue()));
+        T value = (T) threadLocalMap.get(this);
+        if (value == null && !threadLocalMap.containsKey(this)) {
+            value = this.initialValue();
+        }
+        return value;
     }
 
     @Override
