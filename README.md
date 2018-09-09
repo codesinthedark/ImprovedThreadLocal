@@ -4,5 +4,5 @@ This is a ThreadLocal compatible class that does not leak class loaders when you
 * compatible with ThreadLocal
 * thread-pool friendly - it will not leak memory and class-loaders when application is stopped or thread removed from the pool
 * absolutely no thread contention (no synchronization or locks for accessing, initializing or removing thread local values)
-* same memory usage per value (improvement over VicariousThreadLocal class and other non-blocking classes that uses twice as much memory)
+* same memory usage as ThreadLocal (improvement over VicariousThreadLocal class and other non-blocking classes that uses twice as much memory)
 * short and simple implementation 
