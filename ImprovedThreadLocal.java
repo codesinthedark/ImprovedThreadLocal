@@ -25,7 +25,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
      * values to be garbage collected once no one else is holding onto the
      * Thread
      */
-    private static final Map<Thread, Map<ThreadLocal<?>, Object>> strongReferencesToThreadLocalValues = Collections
+    private static final Map<Thread, Map<ThreadLocal<?>, Object>> STRONG_REFERENCES_TO_TL_VALUES = Collections
             .synchronizedMap(new WeakHashMap<Thread, Map<ThreadLocal<?>, Object>>());
 
     /**
@@ -33,11 +33,11 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
      * thread. Using this reference we can access the list of strong references
      * in a non-synchronous way.
      */
-    private static final ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>> threadLocalWeakReferenceToMapOfThreadLocals = new ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>>() {
+    private static final ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>> WR_THREAD_LOCALS = new ThreadLocal<WeakReference<Map<ThreadLocal<?>, Object>>>() {
         @Override
         protected WeakReference<Map<ThreadLocal<?>, Object>> initialValue() {
             Map<ThreadLocal<?>, Object> value = new WeakHashMap<>();
-            strongReferencesToThreadLocalValues.put(Thread.currentThread(), value);
+            STRONG_REFERENCES_TO_TL_VALUES.put(Thread.currentThread(), value);
             return new WeakReference<>(value);
         }
     };
@@ -45,7 +45,7 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T get() {
-        Map<ThreadLocal<?>, Object> threadLocalMap = threadLocalWeakReferenceToMapOfThreadLocals.get().get();
+        Map<ThreadLocal<?>, Object> threadLocalMap = WR_THREAD_LOCALS.get().get();
         T value = (T) threadLocalMap.get(this);
         if (value == null && !threadLocalMap.containsKey(this)) {
             value = this.initialValue();
@@ -59,12 +59,12 @@ public class ImprovedThreadLocal<T> extends ThreadLocal<T> {
         // Adding strong reference of this value to the map corresponding to the
         // current thread. We access this map through weak reference in a
         // non-synchronized way to keep good performance.
-        threadLocalWeakReferenceToMapOfThreadLocals.get().get().put(this, value);
+        WR_THREAD_LOCALS.get().get().put(this, value);
     }
 
     @Override
     public void remove() {
-        threadLocalWeakReferenceToMapOfThreadLocals.get().get().remove(this);
+        WR_THREAD_LOCALS.get().get().remove(this);
     }
 
 }
